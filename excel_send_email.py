@@ -46,13 +46,15 @@ def get_msg():
     # メールアドレス情報取得
     global gmailUser,gmailPassword,emails
     global subject,content,pdf_path
+    global md
     print 'Loading data ...'
     if args.testmail:
+        print 'testing'
         md = pd.read_excel(u'./index/test_mails.xlsx',header=None)#test_mails
         emails = [x.encode('utf-8') for x in md[2] if pd.isnull(x)==False]
     else:
         md = pd.read_excel(u'./index/mydutypart.xlsx',header=None)#test_mails
-        emails = [x.encode('utf-8') for x in md[2] if pd.isnull(x)==False]        
+        emails = [x.encode('utf-8') for x in md[2] if pd.isnull(x)==False and type(x)!=float]        
     we = pd.read_excel(u'./index/work_emails.xlsx')
     gmailUser = list(we[u'账号'])[account_number]
     gmailPassword = list(we[u'密码'])[account_number]
@@ -187,9 +189,15 @@ if args.checkleader:
     tired=0
 
 if args.sendall:
-    emails = [x.encode('utf-8') for x in md[2]]
+    emails = [x.encode('utf-8') for x in md[2] if pd.isnull(x)==False and type(x)!=float]
     OneUsrSendMail()
     tired=0
+
+if args.testmail:
+    emails = [x.encode('utf-8') for x in md[2] if pd.isnull(x)==False and type(x)!=float]
+    OneUsrSendMail()
+    tired=0
+
 
 if  len(sys.argv) == 1:
     print 'please use -h to get the help!'
